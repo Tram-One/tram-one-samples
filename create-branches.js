@@ -1,5 +1,6 @@
-import fs from 'fs'
-import ghpages from 'gh-pages'
+const fs = require('fs')
+const ghpages = require('gh-pages')
+const chalk = require('chalk')
 
 // mapping of files to their template
 // usually source as index.js
@@ -20,23 +21,43 @@ const sourceMappings = [
 ]
 
 // build folder with template and source file mappings
-sourceMappings.forEach(mapping => {
-	const { branch, ...fileMappings } = mapping
+const processAllMappings = async () => {
+	for (const mapping of sourceMappings) {
+		const { branch, ...fileMappings } = mapping
 
-	// add all source files to template folder as their mapping
-	const destinationFiles = []
-	for (const [source, destination] of Object.entries(fileMappings)) {
-		fs.copyFileSync(source, destination)
-		destinationFiles.push(destination)
+		// add all source files to template folder as their mapping
+		const destinationFiles = []
+		console.log(chalk.blue('copying files to template folder...'))
+		for (const [source, destination] of Object.entries(fileMappings)) {
+			console.log(chalk.blue('copying'), chalk.yellow((source), chalk.blue('to'), chalk.yellow(destination)))
+			fs.copyFileSync(source, destination)
+			destinationFiles.push(destination)
+		}
+
+		// publish template as branch
+		console.log(chalk.blue('publishing'), chalk.green(branch), chalk.blue('...'))
+		const publishPromise = new Promise((resolve, reject) => {
+			ghpages.publish('./template', { branch }, (err) => {
+				if (err) {
+					console.error(err)
+					return reject()
+				}
+				console.log(chalk.blue('published'), chalk.green(branch))
+				resolve()
+			})
+		})
+
+		await publishPromise
+
+		// remove files
+		console.log(chalk.blue('cleaning up files...'))
+		for (const file of destinationFiles) {
+			console.log(chalk.blue('cleaning up'), chalk.yellow(file))
+			fs.unlinkSync(file)
+		}
+
+		console.log('\n')
 	}
+}
 
-	// publish template as branch
-	ghpages.publish('./template', { branch }, (err) => {
-		if (err) throw err
-	})
-
-	// remove files
-	for (const file of destinationFiles) {
-		fs.unlinkSync(file)
-	}
-})
+processAllMappings()
