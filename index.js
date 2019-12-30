@@ -1,12 +1,9 @@
 import { start, registerHtml } from 'tram-one'
-import customHeader from './custom-header'
 
-const html = registerHtml({
-	'custom-header': customHeader
-})
+const html = registerHtml()
 
-const home = () => html`
-  <custom-header />
-`
+const home = () => {
+	return html`<h1>Tram-One</h1>`
+}
 
 start('#app', home)
