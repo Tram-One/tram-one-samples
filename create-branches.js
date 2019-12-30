@@ -1,6 +1,7 @@
 const fs = require('fs')
 const ghpages = require('gh-pages')
 const chalk = require('chalk')
+const { execSync } = require('child_process');
 
 // mapping of files to their template
 // usually source as index.js
@@ -56,6 +57,11 @@ const processAllMappings = async () => {
 			fs.unlinkSync(file)
 		}
 
+		console.log(chalk.blue('pull updates for the repo'))
+		execSync('git pull')
+
+		console.log(chalk.blue('clear gh-pages cache'))
+		execSync('npm run cleanup')
 		console.log('\n')
 	}
 }

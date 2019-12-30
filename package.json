@@ -4,7 +4,8 @@
   "description": "",
   "main": "create-branch.js",
   "scripts": {
-    "build": "node create-branches.js"
+		"build": "node create-branches.js",
+		"cleanup": "gh-pages-clean"
   },
   "repository": {
     "type": "git",
