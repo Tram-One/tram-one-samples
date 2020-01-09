@@ -1,5 +1,6 @@
 import { start, registerHtml, useUrlParams } from 'tram-one'
 
+const url = window.location.hostname
 const html = registerHtml()
 
 const home = () => {
@@ -8,8 +9,8 @@ const home = () => {
 	return html`
     <div>
       <h1>No Page</h1>
-      <div><a href="/home">Home Page</a></div>
-      <div><a href="/Details">Details Page</a></div>
+      <div><a href="/home">Home Page (${url}/home)</a></div>
+      <div><a href="/details">Details Page (${url}/details)</a></div>
     </div>
   `
 }
